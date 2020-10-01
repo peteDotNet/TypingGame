@@ -14,8 +14,8 @@ namespace TypingGameWPF.Models
         public Guid Id { get; set; }
         public string Speed { get; set; }
         public string Accuracy { get; set; }
-    }
 
+    }
 
     public class TutorialModel
     {
@@ -23,8 +23,51 @@ namespace TypingGameWPF.Models
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string Paragraph { get; set; }
-        public int NoAtempts { get; set; }
+        public int NoAttempts { get; set; }
+
         public int HighScore { get; set; }
+
+
+        public int FastestWPM { get; set; }
+        public double FastestTime { get; set; }
+
+        private string _numberOfAttempts;
+
+
+        public string NumberOfAttempts
+        {
+            get { return $"Attempts: {NoAttempts}"; }
+            private set { _numberOfAttempts = value; }
+        }
+
+        private string _highScoreString;
+
+        public string HighScoreString
+        {
+            get { return $"High Score: {HighScore}"; }
+            private set { _highScoreString = value; }
+        }
+
+        private string _fastestWPMString;
+
+        public string FastestWPMString
+        {
+            get { return $"Top WPM: {FastestWPM}"; }
+            private set { _fastestWPMString = value; }
+        }
+
+        private string _fastestTimeString;
+
+        public string FastestTimeString
+        {
+            get { return $"Best Time: {FastestTime}(s)"; }
+            private set { _fastestTimeString = value; }
+        }
+
+
+
+
+
 
     }
 
@@ -41,3 +84,4 @@ namespace TypingGameWPF.Models
         public string Tutorial { get; set; }
     }
 }
+

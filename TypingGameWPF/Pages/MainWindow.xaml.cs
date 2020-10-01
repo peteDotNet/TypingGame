@@ -19,6 +19,8 @@ using System.Windows.Shapes;
 using TypingGameWPF.Models;
 using System.Runtime.CompilerServices;
 using System.Diagnostics;
+using System.Collections.ObjectModel;
+using System.Net;
 
 namespace TypingGameWPF
 {
@@ -29,7 +31,36 @@ namespace TypingGameWPF
     {
         IMongoDatabase db;
 
-        List<TutorialModel> tutorialsList;
+        private List<TutorialModel> _tutorialsList;
+
+
+        public List<TutorialModel> tutorialsList
+        {
+            get { return _tutorialsList; }
+            set
+            {
+                if (_tutorialsList != value)
+                {
+                    _tutorialsList = value;
+                    OnPropertyChanged("tutorialsList");
+
+                }
+            }
+        }
+
+        private string _nextTutorial;
+
+        public string NextTutorial
+        {
+            get { return _nextTutorial; }
+            set
+            {
+                _nextTutorial = value;
+                OnPropertyChanged("NextTutorial");
+            }
+        }
+
+
         private TutorialModel _currentTutorial;
         public TutorialModel CurrentTutorial
         {
@@ -38,31 +69,21 @@ namespace TypingGameWPF
             {
                 if (_currentTutorial != value)
                 {
+                   
                     _currentTutorial = value;
-                    OnPropertyChanged();
+                    OnPropertyChanged("CurrentTutorial");
+                    DisplayTutorialMetrics();
+
+                    ResetTutorial();
                 }
             }
         }
 
-
-        private string _currentParagraph;
-        public string CurrentParagraph
-        {
-            get { return _currentParagraph; }
-            set
-            {
-                if (_currentParagraph != value)
-                {
-                    _currentParagraph = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
 
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        private void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -74,73 +95,57 @@ namespace TypingGameWPF
         double Accuracy;
         double Time;
         double WPM;
-
+        double score;
+        BrushConverter converter = new System.Windows.Media.BrushConverter();
+        Brush w;
+        Brush g;
         public MainWindow()
         {
-
+            w = (Brush)converter.ConvertFromString("#FFFFE5D9");
+            g = (Brush)converter.ConvertFromString("#71BD85");
             DataContext = this;
 
             var client = new MongoClient();
             db = client.GetDatabase("TypingMetrics");
 
+
             InitializeComponent();
 
-            tutorialsList = LoadTutorials<TutorialModel>();
-            if(tutorialsList.Count > 0)
-                CurrentTutorial = tutorialsList.First();
-            ComBoBox1.ItemsSource = tutorialsList;
-
-            RefreshResultsDataGrid();
-
-            RefreshResultsStackPanel();
-
-            DisplayTutorialMetrics();
-
-            int i = tutorialsList.Count() + 1;
-            var NewTutorialName = $"Tutorial: {i}";
-            TitleTextBlock.Text = NewTutorialName;
-
-        }
-
-        private void RefreshResultsDataGrid()
-        {
-            var attempts = LoadAttempts<AttemptModel>();
-            dataGrid1.ItemsSource = attempts;
-        }
-
-        private void RefreshResultsStackPanel()
-        {
-            tutorialsList = LoadTutorials<TutorialModel>();
-
-            TutorialsStackPanel.Children.Clear();
-
-            foreach (TutorialModel t in tutorialsList)
+            try
             {
-                initStackPanelButton(t.Name);
+                tutorialsList = LoadTutorials<TutorialModel>();
+
+                CurrentTutorial = tutorialsList.First();
+
+
+                int i = tutorialsList.Count() + 1;
+                NextTutorial = $"Tutorial: {i}";
             }
+            catch { };
+   
 
-            initStackPanelButton("Show All");
         }
 
-        private void initStackPanelButton(string content)
+
+
+        private void SelectCurrentTutorial(object sender, RoutedEventArgs e)
         {
-            Border bord = new Border();
-            bord.BorderThickness = new Thickness(2);
-            bord.CornerRadius = new CornerRadius(10);
-            bord.BorderBrush = (SolidColorBrush)(new BrushConverter().ConvertFrom("#343A40"));
-            bord.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#707070"));
-            Button b = new Button();
-            b.Click += new RoutedEventHandler(DisplayTutorialMetrics);
-            b.Content = content;
-            bord.Child = b;
-            TutorialsStackPanel.Children.Add(bord);
+            string tutorialName = (sender as Button).Content.ToString();
+
+            tutorialsList = LoadTutorials<TutorialModel>();
+            var t = tutorialsList.Where(a => a.Name == tutorialName).First();
+
+
+            CurrentTutorial = t;
+            CustomTextBox.Text = "";
 
         }
+
+
 
         void DisplayTutorialMetrics(object sender, EventArgs e)
         {
             string tutorialName = (sender as Button).Content.ToString();
-            TitleTextBlock1.Text = tutorialName;
 
             var attempts = LoadAttempts<AttemptModel>();
             var results = attempts;
@@ -150,17 +155,11 @@ namespace TypingGameWPF
                 results = attempts.Where(a => a.Tutorial == tutorialName).ToList();
             }
 
-
             dataGrid1.ItemsSource = results;
 
             var tutorial = LoadTutorials<TutorialModel>();
             var t = tutorial.Where(a => a.Name == tutorialName);
 
-            if (t.Count() > 0)
-            {
-                var tm = t.First();
-                MetricsTextBlock.Text = $"No Attempts: { tm.NoAtempts }\nHigh Score {tm.HighScore}\n";
-            }
 
             List<KeyValuePair<string, int>> valueList = new List<KeyValuePair<string, int>>();
 
@@ -175,26 +174,34 @@ namespace TypingGameWPF
 
             ResultGraph1.ItemsSource = valueList;
 
-
         }
-
 
         void DisplayTutorialMetrics()
         {
+
            
-            var attempts = LoadAttempts<AttemptModel>();
-            dataGrid1.ItemsSource = attempts;
-
-            List<KeyValuePair<string, int>> valueList = new List<KeyValuePair<string, int>>();
-
-            int i = 0;
-            foreach (AttemptModel am in attempts)
+            if (CurrentTutorial != null)
             {
-                int wpm = Convert.ToInt32(am.WPM);
-                valueList.Add(new KeyValuePair<string, int>(i.ToString(), wpm));
-                i++;
+                var results = LoadAttempts<AttemptModel>();
+
+                var attempts = results.Where(a => a.Tutorial == CurrentTutorial.Name).ToList();
+
+
+                dataGrid1.ItemsSource = attempts;
+
+                List<KeyValuePair<string, int>> valueList = new List<KeyValuePair<string, int>>();
+
+                int i = 0;
+                foreach (AttemptModel am in attempts)
+                {
+                    int wpm = Convert.ToInt32(am.WPM);
+                    valueList.Add(new KeyValuePair<string, int>(i.ToString(), wpm));
+                    i++;
+                }
+                ResultGraph1.ItemsSource = valueList;
+
+                
             }
-            ResultGraph1.ItemsSource = valueList;
         }
 
 
@@ -216,7 +223,40 @@ namespace TypingGameWPF
             return collection.Find(new BsonDocument()).ToList();
         }
 
-        public List<AttemptModel> LoadAttempts<AttemptModel>()
+        private List<TutorialModel> UpdateTutorials<TutorialModel>()
+        {
+            var collection = db.GetCollection<TutorialModel>("Tutorials");
+            var filter = Builders<TutorialModel>.Filter.Eq("Id", CurrentTutorial.Id);
+
+
+            if (score > CurrentTutorial.HighScore)
+            {
+                var updateHighScore = Builders<TutorialModel>.Update.Set("HighScore", score);
+                collection.UpdateOne(filter, updateHighScore);
+            }
+
+            if (WPM > CurrentTutorial.FastestWPM)
+            {
+                var updateFastestWPM = Builders<TutorialModel>.Update.Set("FastestWPM", WPM);
+                collection.UpdateOne(filter, updateFastestWPM);
+            }
+            if (Time > CurrentTutorial.FastestTime)
+            {
+                var updateFastestTime = Builders<TutorialModel>.Update.Set("FastestTime", Time);
+                collection.UpdateOne(filter, updateFastestTime);
+            }
+
+
+            var updateAttempts = Builders<TutorialModel>.Update.Set("NoAttempts", CurrentTutorial.NoAttempts + 1);
+            collection.UpdateOne(filter, updateAttempts);
+
+
+            return collection.Find(new BsonDocument()).ToList();
+        }
+
+      
+
+        private List<AttemptModel> LoadAttempts<AttemptModel>()
         {
             var collection = db.GetCollection<AttemptModel>("Attempts");
             return collection.Find(new BsonDocument()).ToList();
@@ -229,32 +269,30 @@ namespace TypingGameWPF
             int i = t.Count() + 1;
 
             var NewTutorialName = $"Tutorial: {i}";
-            var FutureTutorialName = $"Tutorial: {i + 1}";
+            NextTutorial = $"Tutorial: {i + 1}";
 
-            TitleTextBlock.Text = FutureTutorialName;
 
             TutorialModel tm = new TutorialModel();
             tm.Paragraph = CustomTextBox.Text;
             tm.Name = NewTutorialName;
-            tm.NoAtempts = 0;
+            tm.NoAttempts = 0;
             tm.HighScore = 0;
+            tm.FastestWPM = 0;
 
             InsertTutorial(tm);
             tutorialsList = LoadTutorials<TutorialModel>();
-            ComBoBox1.ItemsSource = tutorialsList;
-            RefreshResultsStackPanel();
+            CurrentTutorial = tutorialsList.First();
             CustomTextBox.Text = "";
 
         }
 
-      
 
-      
 
         int ij = 0;
         private void TextBox_KeyUp(object sender, KeyEventArgs e)
         {
 
+            MetricsTextbox.Foreground = w;
             if (!stopWatch.IsRunning)
                 stopWatch.Start();
 
@@ -265,7 +303,6 @@ namespace TypingGameWPF
                 CheckIfCharacterIsCorrect(input);
 
                 CaluculateMetrics();
-
                 CheckIfTutorialFinished();
             }
         }
@@ -277,10 +314,10 @@ namespace TypingGameWPF
             WPM = Math.Floor((double)CorrectCharacters / (5 * v));
 
             Accuracy = Math.Round(1 - ((double)errors / (double)CorrectCharacters), 3);
-            Time = stopWatch.Elapsed.TotalMilliseconds;
-            var timeInMilliseconds = Math.Round(Time / 1000, 2);
-
-            MetricsTextbox.Text = "WPM: " + WPM + "\nErrors: " + errors.ToString() + "\nAccuracy: " + Accuracy + "\nTime: " + timeInMilliseconds;
+            var FullTime = stopWatch.Elapsed.TotalMilliseconds;
+            Time = Math.Round(FullTime / 1000, 2);
+            score = Math.Round(Accuracy * WPM, 0);
+            MetricsTextbox.Text = $"Score: {score}\nWPM: {WPM}\nAccuracy: {Accuracy}\nTime: {Time}";
         }
 
         private void CheckIfCharacterIsCorrect(string input)
@@ -316,18 +353,17 @@ namespace TypingGameWPF
             if (CorrectCharacters == CurrentTutorial.Paragraph.Length)
             {
                 SubmitAttempt();
+                MetricsTextbox.Foreground = g;
 
-                CorrectCharacters = 0;
-                ij = 0;
-                textboxInput.Text = "";
-                textBox2.Text = "";
-                stopWatch.Restart();
-                stopWatch.Stop();
-                errors = 0;
-                WPM = 0;
-                Accuracy = 0;
+                var id = CurrentTutorial.Id;
+                tutorialsList = UpdateTutorials<TutorialModel>();
+                foreach (TutorialModel tm in tutorialsList)
+                {
+                    if (tm.Id == id)
+                        CurrentTutorial = tm;
+                }
 
-                CurrentTutorial = null;
+                ResetTutorial();
             }
         }
 
@@ -338,21 +374,25 @@ namespace TypingGameWPF
             am.Date = DateTime.Now.Date;
             am.Accuracy = Accuracy;
             am.Time = Time;
-            var timeInMilliseconds = Math.Round(Time / 1000,2);
+            //var timeInMilliseconds = Math.Round(Time / 1000, 2);
 
-        
-            am.TimeString = timeInMilliseconds.ToString();
+
+            am.TimeString = Time.ToString();
             am.Tutorial = CurrentTutorial.Name;
             am.WPM = WPM;
-            am.Score = Math.Round(Accuracy * WPM,0);
+            am.Score = score;
             InsertAttempt<AttemptModel>(am);
-            RefreshResultsDataGrid();
             DisplayTutorialMetrics();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            ResetTutorial();
 
+        }
+
+        private void ResetTutorial()
+        {
             CorrectCharacters = 0;
             ij = 0;
             textboxInput.Text = "";
@@ -363,42 +403,84 @@ namespace TypingGameWPF
             WPM = 0;
             Accuracy = 0;
             textboxInput.Focus();
-
         }
 
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
+
+            var collection = db.GetCollection<TutorialModel>("Tutorials");
+            var filter = Builders<TutorialModel>.Filter.Eq("Id", CurrentTutorial.Id);
+
+            var updateHighScore = Builders<TutorialModel>.Update.Set("HighScore", 0);
+            collection.UpdateOne(filter, updateHighScore);
+
+            var updateAttempts = Builders<TutorialModel>.Update.Set("NoAttempts", 0);
+            collection.UpdateOne(filter, updateAttempts);
+
             var AttemptsCollection = db.GetCollection<AttemptModel>("Attempts");
 
-            var deleteFilter = Builders<AttemptModel>.Filter.Eq("Tutorial", TitleTextBlock1.Text);
+            var deleteFilter = Builders<AttemptModel>.Filter.Eq("Tutorial", CurrentTutorial.Name);
             AttemptsCollection.DeleteMany(deleteFilter);
 
-            RefreshResultsDataGrid();
+            var id = CurrentTutorial.Id;
+            tutorialsList = LoadTutorials<TutorialModel>();
+
+            foreach (TutorialModel tm in tutorialsList)
+            {
+                if (tm.Id == id)
+                    CurrentTutorial = tm;
+            }
+
         }
 
         private void Button_Click_3(object sender, RoutedEventArgs e)
         {
-            string tutorial = TitleTextBlock1.Text;
-            if(tutorial != "Show All")
+            string tutorial = CurrentTutorial.Name;
+
+            var AttemptsCollection = db.GetCollection<AttemptModel>("Attempts");
+            var deleteFilter = Builders<AttemptModel>.Filter.Eq("Tutorial", tutorial);
+            AttemptsCollection.DeleteMany(deleteFilter);
+
+            var Tutorialollection = db.GetCollection<TutorialModel>("Tutorials");
+
+            var deleteTutorialFilter = Builders<TutorialModel>.Filter.Eq("Name", tutorial);
+            Tutorialollection.DeleteMany(deleteTutorialFilter);
+
+            tutorialsList = LoadTutorials<TutorialModel>();
+
+            try
             {
-                var AttemptsCollection = db.GetCollection<AttemptModel>("Attempts");
-                var deleteFilter = Builders<AttemptModel>.Filter.Eq("Tutorial", tutorial);
-                AttemptsCollection.DeleteMany(deleteFilter);
+                CurrentTutorial = tutorialsList.Last();
 
-                RefreshResultsDataGrid();
-
-
-                var Tutorialollection = db.GetCollection<TutorialModel>("Tutorials");
-
-                var deleteTutorialFilter = Builders<TutorialModel>.Filter.Eq("Name", tutorial);
-                Tutorialollection.DeleteMany(deleteTutorialFilter);
-
-                RefreshResultsDataGrid();
-                RefreshResultsStackPanel();
+                int i = tutorialsList.Count();
+                NextTutorial = $"Tutorial: {i + 1}";
             }
+            catch { }
+    
+        }
 
-           
-            
+        private void Button_Click_4(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Button_Click_5(object sender, RoutedEventArgs e)
+        {
+            var json = new WebClient().DownloadString("https://random-word-api.herokuapp.com/word?number=15");
+            var djson = Newtonsoft.Json.JsonConvert.DeserializeObject<string[]>(json);
+
+            StringBuilder sb = new StringBuilder();
+
+            foreach (string s in djson)
+            {
+                sb.Append(s);
+                sb.Append(" ");
+            }
+            sb.Append(".");
+
+            string ss = sb.ToString();
+
+            CustomTextBox.Text = sb.ToString();
         }
     }
 }

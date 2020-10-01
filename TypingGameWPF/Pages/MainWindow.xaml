@@ -8,12 +8,45 @@
         mc:Ignorable="d"
         Title="Typing Test" Height="550" Width="900" Background="#FF080808" Icon="text (1).png">
 
-  
+
     <Window.Resources>
+
+        <!--<Style TargetType="ComboBoxItem">
+            <Setter Property="Background">
+                <Setter.Value>
+                    <SolidColorBrush Color="Gray"></SolidColorBrush>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter 
+                        Property="Background"
+                        Value="#565454" />
+                </Trigger>
+            </Style.Triggers>
+
+
+        </Style>-->
+
+        <Style TargetType="DVC:LineSeries">
+            <Setter Property="Background">
+                <Setter.Value>
+                    <LinearGradientBrush>
+                        <GradientStop Color="White"  Offset="0"/>
+                        <GradientStop Color="#495057" Offset="1"/>
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+
+        </Style>
 
         <Style TargetType="Button"  >
             <Setter Property="Margin" Value="3"/>
+            <Setter Property="Padding" Value="4,0"/>
             <Setter Property="Background" Value="#707070"/>
+
+
+
             <Setter Property="Foreground" Value="#FFE5D9"/>
             <Setter Property="FontSize" Value="20"/>
             <Style.Triggers>
@@ -28,6 +61,7 @@
             <Setter Property="FontSize" Value="20"/>
             <Setter Property="Foreground" Value="#FFE5D9"/>
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
+
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type TabItem}">
@@ -58,6 +92,67 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <Style x:Key="myDataPointStyle" TargetType="{x:Type DVC1:LineDataPoint}">
+            <Setter Property="Background" Value="#CA9C52"/>
+        </Style>
+
+
+        <DataTemplate x:Key="UserDataTemplate">
+
+            <Border  BorderThickness="2" BorderBrush="#383838" Background="#707070" CornerRadius="5" Margin="3,1">
+                <Button HorizontalAlignment="Stretch" Content="{Binding Path=Name}" Click="SelectCurrentTutorial" />
+            </Border>
+        </DataTemplate>
+
+        <!--<Style x:Key="ComboBoxTest2" TargetType="{x:Type ComboBox}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <ToggleButton Grid.Column="2" Focusable="false" IsChecked="{Binding Path=IsDropDownOpen,Mode=TwoWay,RelativeSource={RelativeSource TemplatedParent}}" >
+                                <ToggleButton.Template>
+                                    <ControlTemplate>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="5*" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <Border x:Name="Border"  Grid.ColumnSpan="2"  Background="Black" BorderBrush="Black" BorderThickness="1" />
+                                            <Border Grid.Column="0"   Margin="1"  Background="#343A40"  BorderBrush="Black" BorderThickness="0,0,1,0" />
+                                            <Path x:Name="Arrow" Grid.Column="1"  Fill="#FFFFE5D9" HorizontalAlignment="Center" VerticalAlignment="Center" Data="M 0 0 L 4 4 L 8 0 Z"/>
+                                        </Grid>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="ToggleButton.IsMouseOver" Value="true">
+                                                <Setter TargetName="Border" Property="Background" Value="#343A40" />
+                                            </Trigger>
+                                            <Trigger Property="ToggleButton.IsChecked" Value="true">
+                                                <Setter TargetName="Border" Property="Background" Value="#343A40" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+                            </ToggleButton>
+                            <ContentPresenter Name="ContentSite" IsHitTestVisible="False" Content="{TemplateBinding SelectionBoxItem}" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}" Margin="3"  />
+                            <TextBox x:Name="PART_EditableTextBox" Visibility="Hidden" Foreground="#FFFFE5D9" IsReadOnly="{TemplateBinding IsReadOnly}"/>
+                            <Popup Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True"  Focusable="False" PopupAnimation="Slide">
+                                <Grid  Name="DropDown" SnapsToDevicePixels="True" MinWidth="{TemplateBinding ActualWidth}" MaxHeight="{TemplateBinding MaxDropDownHeight}">
+                                    <Border x:Name="DropDownBorder" Background="Gray" />
+                                    <ScrollViewer SnapsToDevicePixels="True">
+                                        <StackPanel IsItemsHost="True" />
+                                    </ScrollViewer>
+                                </Grid>
+                            </Popup>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+            </Style.Triggers>
+        </Style>-->
+
+
+
     </Window.Resources>
 
     <Grid>
@@ -65,62 +160,68 @@
 
 
         <Grid x:Name="SidePanel">
+            <!--<Grid.RowDefinitions>
+                <RowDefinition Height="45*"/>
+                <RowDefinition Height="476*"/>
+            </Grid.RowDefinitions>-->
 
-            <Rectangle Fill="#343A40" Margin="0,0,2,-0.2"></Rectangle>
+            <Rectangle Fill="#343A40" Margin="0,0,1.6,-0.2" Grid.RowSpan="2"></Rectangle>
 
-            <TabControl  TabStripPlacement="Left"  >
+
+
+            <TabControl  TabStripPlacement="Left" Margin="0,1.2,-0.4,-0.2" Grid.Row="1"   >
 
                 <TabItem Style="{StaticResource TabButton}" Header="Tutorials" >
                     <Grid Background="#495057">
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="144*"/>
-                            <RowDefinition Height="328*"/>
-                            <RowDefinition Height="43*"/>
+                            <RowDefinition Height="57*"/>
+                            <RowDefinition Height="190*"/>
+                            <RowDefinition Height="198*"/>
+                            <RowDefinition Height="70*"/>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="1*"/>
-                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="248*"/>
+                            <ColumnDefinition Width="499*"/>
                         </Grid.ColumnDefinitions>
-                        <!--<ComboBox ItemsSource="{Binding Path=tutorialsComboBox}"  SelectedValuePath="Name" SelectedValue="{Binding CurrentTutorial}" Grid.Column="0" HorizontalAlignment="Left"  Margin="10,10,0,0"  FontSize="20" VerticalAlignment="Top" FontWeight="Bold" Foreground="Black" Height="40" Width="200"   Name="ComBoBox1" >
-                            <ComboBox.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding CurrentTutorial.Name}"></TextBlock>
-                                </DataTemplate>
-                            </ComboBox.ItemTemplate>
-                        </ComboBox>-->
 
+                        <ComboBox  SelectedItem="{Binding CurrentTutorial, Mode=TwoWay}"  ItemsSource="{Binding Path=tutorialsList}" DisplayMemberPath="Name" HorizontalAlignment="Right"  Margin="0"  FontSize="20" VerticalAlignment="Top" FontWeight="Bold" Foreground="Black" Height="40" Width="200" Grid.Column="1" >
 
-                        <Button Content="Restart" Width="81" Margin="0,16,42.8,0" VerticalAlignment="Top" HorizontalAlignment="Right" Click="Button_Click" Height="30" />
-
-                        <ComboBox  SelectedItem="{Binding Path=CurrentTutorial}" Grid.Column="0" HorizontalAlignment="Left"  Margin="20,10,0,0"  FontSize="20" VerticalAlignment="Top" FontWeight="Bold" Foreground="Black" Height="40" Width="200"   Name="ComBoBox1"  >
-                            <ComboBox.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding Name}" ></TextBlock>
-                                </DataTemplate>
-                            </ComboBox.ItemTemplate>
                         </ComboBox>
 
+                        <!--<ComboBox  SelectedItem="{Binding CurrentTutorial, Mode=TwoWay}"  ItemsSource="{Binding Path=tutorialsList}" DisplayMemberPath="Name" HorizontalAlignment="Right"    VerticalAlignment="Top" Style="{StaticResource ComboBoxTest2}"  Width="200" Grid.Column="1" >
+
+                        </ComboBox>-->
+
+                        <Border CornerRadius="5" Background="#71BD85" BorderThickness="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="90" Height="40" BorderBrush="#707070" Padding="5"  Margin="0,0,20.2,20.4" Grid.Column="1" Grid.Row="3">
+                            <Button Content="Retry" Background="#71BD85" Foreground="Black" BorderThickness="0"  Margin="0"  Click="Button_Click"  />
+                        </Border>
 
 
 
-                        <!--DisplayMemberPath="Name"-->
-                        <!--<RichTextBox x:Name="textBox1" Background="#343A40" Grid.ColumnSpan="2" Grid.Column="0"   Margin="20,10" Grid.Row="1"  >
-                            <FlowDocument>
-                                <Paragraph FontSize="20" Foreground="#FFFFE5D9">
-                                    <Run  Text="{Binding Path=CurrentTutorial.Paragraph, Mode=OneWay}"/>
-                                </Paragraph>
-
-                            </FlowDocument>
-                        </RichTextBox>-->
-                        <TextBlock x:Name="textBox1" Text="{Binding Path=CurrentTutorial.Paragraph}" TextWrapping="Wrap" Background="#343A40" Grid.ColumnSpan="2" Grid.Column="0"   Margin="20,10,19.6,12" Grid.Row="1"   >
-
-                        </TextBlock>
-                        <TextBlock x:Name="textBox2" Grid.ColumnSpan="2" Grid.Column="0"   Margin="20,10,19.6,12" Grid.Row="1" Foreground="Green" TextWrapping="Wrap"  />
+                        <Border Margin="20,10.2,20.2,11" BorderBrush="#383838" BorderThickness="3" Background="#343A40" Grid.Column="1" Grid.Row="1" Grid.RowSpan="2" Padding="5">
+                            <Grid>
+                                <TextBlock x:Name="textBox1" Text="{Binding Path=CurrentTutorial.Paragraph}" TextWrapping="Wrap"  />
+                                <TextBlock x:Name="textBox2" Grid.Column="1" Foreground="Green" TextWrapping="Wrap"  />
+                            </Grid>
+                        </Border>
 
 
-                        <TextBox x:Name="textboxInput" Background="#343A40"  Foreground="#FFFFE5D9" Grid.Column="0"   Margin="20" Height="30" VerticalAlignment="Bottom"  FontSize="20" KeyUp="TextBox_KeyUp"    />
-                        <TextBlock x:Name="MetricsTextbox" Text="Metrics" Background="#343A40" Foreground="#FFFFE5D9" Grid.Column="1"   Margin="10.2,10,19.6,20"  Grid.Row="0"  FontSize="20"></TextBlock>
+                        <TextBox x:Name="textboxInput" Background="#343A40"  Foreground="#FFFFE5D9" Grid.Column="1"   Margin="23,0,133.2,21.4" Height="35" VerticalAlignment="Bottom"  FontSize="20" KeyUp="TextBox_KeyUp" Grid.Row="3"    />
 
+                        <Border Padding="10" Grid.Column="0" Grid.Row="1" Background="#343A40"   Margin="20,10.2,10,12.4" Grid.RowSpan="1">
+                            <StackPanel >
+                                <TextBlock Text="Metrics" Margin="0,0,0,5" Foreground="#FFFFE5D9"  FontWeight="Bold" FontSize="20" TextDecorations="Underline"/>
+                                <TextBlock x:Name="MetricsTextbox" Text=""  Foreground="#FFFFE5D9"   FontSize="20" Margin="0,0,-0.4,0"/>
+
+                            </StackPanel>
+                        </Border>
+
+                        <TextBlock   HorizontalAlignment="Left"  Margin="20,10,0,0"  Text="{Binding Path=CurrentTutorial.Name}" FontSize="30" VerticalAlignment="Top" FontWeight="Bold" Foreground="#FFE5D9" Height="40" Width="216"/>
+
+
+                        <ScrollViewer Grid.Column="0" Margin="20,2.6,10,20.4" Grid.Row="2" Grid.RowSpan="2">
+                            <ItemsControl Background="#343A40" ItemsSource="{Binding Path=tutorialsList}" ItemTemplate="{StaticResource UserDataTemplate}"  />
+                        </ScrollViewer>
 
                     </Grid>
 
@@ -131,42 +232,45 @@
                 <TabItem Style="{StaticResource TabButton}" Header="Results" >
                     <Grid Background="#495057">
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="56*"/>
-                            <RowDefinition Height="229*"/>
-                            <RowDefinition Height="236*"/>
+                            <RowDefinition Height="28*"/>
+                            <RowDefinition Height="207*"/>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="187*"/>
-                            <ColumnDefinition Width="574*"/>
-
+                            <ColumnDefinition Width="89*"/>
+                            <ColumnDefinition Width="98*"/>
                         </Grid.ColumnDefinitions>
 
 
-                        <TextBlock  x:Name="TitleTextBlock1" Grid.Column="0" HorizontalAlignment="Left"  Margin="10,10,0,0"  Text="All Tutorials" FontSize="30" VerticalAlignment="Top" FontWeight="Bold" Foreground="#FFE5D9" Height="40" Width="270" Grid.ColumnSpan="2"/>
-                        <StackPanel x:Name="TutorialsStackPanel" Background="#343A40" Grid.Column="0" Grid.Row="1" Margin="20,19.8,17,124.2" Grid.RowSpan="2">
+                        <TextBlock  x:Name="TitleTextBlock1" HorizontalAlignment="Left"  Margin="20,10,0,0"  Text="{Binding Path=CurrentTutorial.Name}" FontSize="30" VerticalAlignment="Top" FontWeight="Bold" Foreground="#FFE5D9" Height="40" Width="270"/>
+                        <ComboBox  SelectedItem="{Binding CurrentTutorial, Mode=TwoWay}"  ItemsSource="{Binding Path=tutorialsList}" DisplayMemberPath="Name" HorizontalAlignment="Right"  Margin="0"  FontSize="20" VerticalAlignment="Top" FontWeight="Bold" Background="Black" Height="40" Width="200" Grid.Column="1" >
 
-                        </StackPanel>
+                        </ComboBox>
 
-                        <Border Grid.Row="2" Margin="15,20" Height="40" VerticalAlignment="Bottom" BorderBrush="#343A40" BorderThickness="2" Background="#707070" CornerRadius="10" Padding="2">
-                            <Button    Content="Clear Attempts" Click="Button_Click_2" />
-                        </Border>
 
-                        <Border Grid.Row="2"  Margin="15,15,15,65" Height="40" VerticalAlignment="Bottom" BorderBrush="#343A40" BorderThickness="2" Background="#707070" CornerRadius="10" Padding="2">
-                            <Button    Content="Detlete Tutorial" Click="Button_Click_3" />
-                        </Border>
 
-                        <Grid Grid.Row="1" Grid.Column="1" Grid.RowSpan="2" Margin="22.8,19.8,19.6,20.2" Background="#343A40">
+
+
+                        <Grid Grid.Row="1" Margin="20,0,20,20" Background="#343A40" Grid.ColumnSpan="2">
                             <Grid.RowDefinitions>
-                                <RowDefinition/>
-                                <RowDefinition/>
+                                <RowDefinition Height="116*"/>
+                                <RowDefinition Height="317*"/>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition/>
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Background="#343A40" FontWeight="Black" Foreground="#FFFFE5D9"   Margin="20,20,30,0" Height="30" VerticalAlignment="Top" Text="Metrics" FontSize="20"   />
-                            <!--<Rectangle Fill="White" Margin="20,20,20,10" Grid.Column="1" ></Rectangle>-->
-                            <DVC1:Chart BorderThickness="0" Background="#343A40" Margin="0" Grid.Column="1" FontSize="13" Title="Accuracy Progression" Foreground="#FFFFE5D9">
+
+                            <StackPanel Orientation="Horizontal" Margin="20,20,10,10" HorizontalAlignment="Stretch" Background="#495057">
+                                <StackPanel VerticalAlignment="Stretch" Margin="15">
+                                    <TextBlock  FontWeight="Black" Foreground="#FFFFE5D9"   Height="30"  Text="{Binding Path=CurrentTutorial.HighScoreString}" FontSize="15"   />
+                                    <TextBlock FontWeight="Black" Foreground="#FFFFE5D9"   Height="30"  Text="{Binding Path=CurrentTutorial.FastestWPMString}" FontSize="15"   />
+                                </StackPanel>
+                                <StackPanel VerticalAlignment="Stretch" Margin="15">
+                                    <TextBlock  FontWeight="Black" Foreground="#FFFFE5D9"   Height="30"  Text="{Binding Path=CurrentTutorial.FastestTimeString}" FontSize="15"   />
+                                    <TextBlock  FontWeight="Black" Foreground="#FFFFE5D9"   Height="30"  Text="{Binding Path=CurrentTutorial.NumberOfAttempts}" FontSize="15"   />
+                                </StackPanel>
+                            </StackPanel>
+                            <DVC1:Chart BorderThickness="0" Background="#343A40" Margin="0,2,353.2,-0.2" FontSize="13" Title="Accuracy Progression" Foreground="#FFFFE5D9" Grid.ColumnSpan="2" Grid.Row="1">
 
                                 <DVC1:Chart.LegendStyle>
                                     <Style TargetType="DVC1:Legend">
@@ -180,14 +284,11 @@
                                     </Style>
                                 </DVC1:Chart.TitleStyle>
 
-
-                                <DVC:LineSeries x:Name="ResultGraph1" Margin="5"  DependentValuePath="Value" IndependentValuePath="Key" ItemsSource="{Binding}"></DVC:LineSeries>
+                                <DVC:LineSeries x:Name="ResultGraph1" Margin="0"   DependentValuePath="Value" IndependentValuePath="Key" ItemsSource="{Binding}"   DataPointStyle="{StaticResource myDataPointStyle}"></DVC:LineSeries>
                             </DVC1:Chart>
-                            <TextBlock x:Name="MetricsTextBlock"  Background="#343A40" Foreground="#FFFFE5D9"   Margin="20,57,30.4,0" Height="136" VerticalAlignment="Top"  FontSize="20"   />
-                            <DataGrid  x:Name="dataGrid1" CanUserAddRows="False" Background="#6C757D" Foreground="#343A40" Grid.Row="2" Grid.ColumnSpan="2" FontSize="13" Margin="20,10,20,20" AutoGenerateColumns="False">
+                            <DataGrid  x:Name="dataGrid1" CanUserAddRows="False" Background="#6C757D" Foreground="#343A40" FontSize="13" Margin="17.4,22,16.2,21.8" AutoGenerateColumns="False" Grid.Column="1" Grid.RowSpan="2">
                                 <DataGrid.Columns >
                                     <DataGridTextColumn  Header="Date" Binding="{Binding Date}" Width="1*"/>
-                                    <DataGridTextColumn  Header="Name" Binding="{Binding Tutorial}" Width="1*"/>
                                     <DataGridTextColumn  Header="WPM" Binding="{Binding WPM}" Width="1*"/>
                                     <DataGridTextColumn  Header="Time" Binding="{Binding TimeString}" Width="1*"/>
                                     <DataGridTextColumn  Header="Accuracy" Binding="{Binding Accuracy}" Width="1*"/>
@@ -200,26 +301,30 @@
                 </TabItem>
 
 
-
-
-
                 <TabItem Style="{StaticResource TabButton}" Header="Custom Game" >
                     <Grid Background="#495057">
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="108*"/>
-                            <RowDefinition Height="333*"/>
-                            <RowDefinition Height="74*"/>
+                            <RowDefinition Height="49*"/>
+                            <RowDefinition Height="146*"/>
+                            <RowDefinition Height="80"/>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
 
-                        <TextBlock x:Name="TitleTextBlock" Grid.Column="0" HorizontalAlignment="Left"  Margin="10,10,0,0"  Text="Tutorial: 1" FontSize="30" VerticalAlignment="Top" FontWeight="Bold" Foreground="#FFE5D9" Height="40" Width="295"/>
-                        <TextBlock Background="#6C757D" Foreground="#FCFCFC"   Margin="20,0,19.6,6" Height="30" VerticalAlignment="Bottom" Text="Create a new tutorial by typing text in the text box and pressing submit" FontSize="20"   />
-                        <TextBox x:Name="CustomTextBox" Background="#343A40" Foreground="#FFFFE5D9"   Margin="20,20,19.6,0"  Grid.Row="1"  FontSize="20"/>
-                        <Button   Grid.Row="2" Margin="0,0,19.6,20.2" Width="150" Height="40" HorizontalAlignment="Right"  VerticalAlignment="Bottom" Click="Button_Click_1">Submit Tutorial</Button>
+                        <TextBlock  Grid.Column="0" HorizontalAlignment="Left"  Margin="20,10,0,0"  Text="{Binding Path=NextTutorial}" FontSize="30" VerticalAlignment="Top" FontWeight="Bold" Foreground="#FFE5D9" Height="40" Width="295"/>
+                        <TextBlock Background="#6C757D" Foreground="#FCFCFC"   Margin="20,0,20.2,11.8" Height="30" VerticalAlignment="Bottom" Text="Create a new tutorial by typing text in the text box and pressing submit" FontSize="20"   />
+                        <TextBox x:Name="CustomTextBox" Background="#343A40" Foreground="#FFFFE5D9"   Margin="20,0"  Grid.Row="1"  FontSize="20" TextWrapping="Wrap"/>
+                        <Border CornerRadius="5" Background="#71BD85" BorderThickness="1" BorderBrush="#707070" Padding="5" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,20.2,19.6"  Height="40" Width="155" Grid.Row="2">
+                            <Button Content="Submit Tutorial" Background="#71BD85" BorderThickness="0" Foreground="Black"  Margin="0"  Click="Button_Click_1"  />
 
+                        </Border>
+
+                        <Border CornerRadius="5"  BorderThickness="1" Background="#707070" BorderBrush="#707070" Padding="5" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,191.2,19.4"  Height="40" Width="155" Grid.Row="2">
+                            <Button Content="Generate Text"  BorderThickness="0"   Margin="0"  Click="Button_Click_5"  />
+
+                        </Border>
 
 
                     </Grid>
@@ -227,6 +332,19 @@
 
 
             </TabControl>
+
+
+            <!--<Border Background="#343A40" Margin="5,5,4.6,3.8"/>-->
+
+            <Border Grid.Row="1"  Margin="10"  HorizontalAlignment="Left" Height="40"  VerticalAlignment="Bottom" BorderBrush="#343A40" BorderThickness="2" Background="#BD7171" CornerRadius="10" Padding="3">
+                <Button    Content="Detlete Tutorial" BorderThickness="0" FontSize="15" Foreground="Black" Background="#BD7171" Click="Button_Click_3" Margin="5" />
+            </Border>
+
+            <Border Grid.Row="1"  Margin="10,60"  HorizontalAlignment="Left" Height="40"  VerticalAlignment="Bottom" BorderBrush="#343A40" BorderThickness="2" Background="#CA9C52" CornerRadius="10" Padding="3">
+                <Button  HorizontalAlignment="Stretch" BorderThickness="0"  Content="Clear Attempts" FontSize="15" Foreground="Black" Background="#CA9C52" Click="Button_Click_2" Margin="5" />
+            </Border>
+
+
 
         </Grid>
 
