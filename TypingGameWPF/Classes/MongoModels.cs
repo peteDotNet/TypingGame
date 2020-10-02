@@ -5,18 +5,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
+
+
+
 
 namespace TypingGameWPF.Models
 {
-    public partial class MainWindow : Window
-    {
-        [BsonId]
-        public Guid Id { get; set; }
-        public string Speed { get; set; }
-        public string Accuracy { get; set; }
-
-    }
-
+ 
     public class TutorialModel
     {
         [BsonId]
@@ -24,15 +20,12 @@ namespace TypingGameWPF.Models
         public string Name { get; set; }
         public string Paragraph { get; set; }
         public int NoAttempts { get; set; }
-
         public int HighScore { get; set; }
-
-
         public int FastestWPM { get; set; }
         public double FastestTime { get; set; }
 
-        private string _numberOfAttempts;
 
+        private string _numberOfAttempts;
 
         public string NumberOfAttempts
         {
@@ -63,11 +56,6 @@ namespace TypingGameWPF.Models
             get { return $"Best Time: {FastestTime}(s)"; }
             private set { _fastestTimeString = value; }
         }
-
-
-
-
-
 
     }
 

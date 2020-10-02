@@ -11,22 +11,6 @@
 
     <Window.Resources>
 
-        <!--<Style TargetType="ComboBoxItem">
-            <Setter Property="Background">
-                <Setter.Value>
-                    <SolidColorBrush Color="Gray"></SolidColorBrush>
-                </Setter.Value>
-            </Setter>
-            <Style.Triggers>
-                <Trigger Property="IsSelected" Value="True">
-                    <Setter 
-                        Property="Background"
-                        Value="#565454" />
-                </Trigger>
-            </Style.Triggers>
-
-
-        </Style>-->
 
         <Style TargetType="DVC:LineSeries">
             <Setter Property="Background">
@@ -105,54 +89,6 @@
             </Border>
         </DataTemplate>
 
-        <!--<Style x:Key="ComboBoxTest2" TargetType="{x:Type ComboBox}">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ComboBox">
-                        <Grid>
-                            <ToggleButton Grid.Column="2" Focusable="false" IsChecked="{Binding Path=IsDropDownOpen,Mode=TwoWay,RelativeSource={RelativeSource TemplatedParent}}" >
-                                <ToggleButton.Template>
-                                    <ControlTemplate>
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="5*" />
-                                                <ColumnDefinition Width="*" />
-                                            </Grid.ColumnDefinitions>
-                                            <Border x:Name="Border"  Grid.ColumnSpan="2"  Background="Black" BorderBrush="Black" BorderThickness="1" />
-                                            <Border Grid.Column="0"   Margin="1"  Background="#343A40"  BorderBrush="Black" BorderThickness="0,0,1,0" />
-                                            <Path x:Name="Arrow" Grid.Column="1"  Fill="#FFFFE5D9" HorizontalAlignment="Center" VerticalAlignment="Center" Data="M 0 0 L 4 4 L 8 0 Z"/>
-                                        </Grid>
-                                        <ControlTemplate.Triggers>
-                                            <Trigger Property="ToggleButton.IsMouseOver" Value="true">
-                                                <Setter TargetName="Border" Property="Background" Value="#343A40" />
-                                            </Trigger>
-                                            <Trigger Property="ToggleButton.IsChecked" Value="true">
-                                                <Setter TargetName="Border" Property="Background" Value="#343A40" />
-                                            </Trigger>
-                                        </ControlTemplate.Triggers>
-                                    </ControlTemplate>
-                                </ToggleButton.Template>
-                            </ToggleButton>
-                            <ContentPresenter Name="ContentSite" IsHitTestVisible="False" Content="{TemplateBinding SelectionBoxItem}" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}" Margin="3"  />
-                            <TextBox x:Name="PART_EditableTextBox" Visibility="Hidden" Foreground="#FFFFE5D9" IsReadOnly="{TemplateBinding IsReadOnly}"/>
-                            <Popup Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True"  Focusable="False" PopupAnimation="Slide">
-                                <Grid  Name="DropDown" SnapsToDevicePixels="True" MinWidth="{TemplateBinding ActualWidth}" MaxHeight="{TemplateBinding MaxDropDownHeight}">
-                                    <Border x:Name="DropDownBorder" Background="Gray" />
-                                    <ScrollViewer SnapsToDevicePixels="True">
-                                        <StackPanel IsItemsHost="True" />
-                                    </ScrollViewer>
-                                </Grid>
-                            </Popup>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-            <Style.Triggers>
-            </Style.Triggers>
-        </Style>-->
-
-
-
     </Window.Resources>
 
     <Grid>
@@ -160,14 +96,8 @@
 
 
         <Grid x:Name="SidePanel">
-            <!--<Grid.RowDefinitions>
-                <RowDefinition Height="45*"/>
-                <RowDefinition Height="476*"/>
-            </Grid.RowDefinitions>-->
 
             <Rectangle Fill="#343A40" Margin="0,0,1.6,-0.2" Grid.RowSpan="2"></Rectangle>
-
-
 
             <TabControl  TabStripPlacement="Left" Margin="0,1.2,-0.4,-0.2" Grid.Row="1"   >
 
@@ -188,14 +118,10 @@
 
                         </ComboBox>
 
-                        <!--<ComboBox  SelectedItem="{Binding CurrentTutorial, Mode=TwoWay}"  ItemsSource="{Binding Path=tutorialsList}" DisplayMemberPath="Name" HorizontalAlignment="Right"    VerticalAlignment="Top" Style="{StaticResource ComboBoxTest2}"  Width="200" Grid.Column="1" >
-
-                        </ComboBox>-->
 
                         <Border CornerRadius="5" Background="#71BD85" BorderThickness="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="90" Height="40" BorderBrush="#707070" Padding="5"  Margin="0,0,20.2,20.4" Grid.Column="1" Grid.Row="3">
                             <Button Content="Retry" Background="#71BD85" Foreground="Black" BorderThickness="0"  Margin="0"  Click="Button_Click"  />
                         </Border>
-
 
 
                         <Border Margin="20,10.2,20.2,11" BorderBrush="#383838" BorderThickness="3" Background="#343A40" Grid.Column="1" Grid.Row="1" Grid.RowSpan="2" Padding="5">
@@ -217,7 +143,6 @@
                         </Border>
 
                         <TextBlock   HorizontalAlignment="Left"  Margin="20,10,0,0"  Text="{Binding Path=CurrentTutorial.Name}" FontSize="30" VerticalAlignment="Top" FontWeight="Bold" Foreground="#FFE5D9" Height="40" Width="216"/>
-
 
                         <ScrollViewer Grid.Column="0" Margin="20,2.6,10,20.4" Grid.Row="2" Grid.RowSpan="2">
                             <ItemsControl Background="#343A40" ItemsSource="{Binding Path=tutorialsList}" ItemTemplate="{StaticResource UserDataTemplate}"  />
@@ -245,9 +170,6 @@
                         <ComboBox  SelectedItem="{Binding CurrentTutorial, Mode=TwoWay}"  ItemsSource="{Binding Path=tutorialsList}" DisplayMemberPath="Name" HorizontalAlignment="Right"  Margin="0"  FontSize="20" VerticalAlignment="Top" FontWeight="Bold" Background="Black" Height="40" Width="200" Grid.Column="1" >
 
                         </ComboBox>
-
-
-
 
 
                         <Grid Grid.Row="1" Margin="20,0,20,20" Background="#343A40" Grid.ColumnSpan="2">
@@ -333,9 +255,7 @@
 
             </TabControl>
 
-
-            <!--<Border Background="#343A40" Margin="5,5,4.6,3.8"/>-->
-
+            <!--Buttons to be displayed on all tabs-->
             <Border Grid.Row="1"  Margin="10"  HorizontalAlignment="Left" Height="40"  VerticalAlignment="Bottom" BorderBrush="#343A40" BorderThickness="2" Background="#BD7171" CornerRadius="10" Padding="3">
                 <Button    Content="Detlete Tutorial" BorderThickness="0" FontSize="15" Foreground="Black" Background="#BD7171" Click="Button_Click_3" Margin="5" />
             </Border>
@@ -344,11 +264,7 @@
                 <Button  HorizontalAlignment="Stretch" BorderThickness="0"  Content="Clear Attempts" FontSize="15" Foreground="Black" Background="#CA9C52" Click="Button_Click_2" Margin="5" />
             </Border>
 
-
-
         </Grid>
-
-
 
     </Grid>
 
